@@ -1,40 +1,12 @@
-import { DepartmentSurcharge } from "../interfaces/Surcharge";
+import { DepartmentSurcharge } from "../interfaces/Surcharge/Surcharge";
+import { Manager } from "../classes/Manager/Manager";
+import { Department } from "../classes/Department/Department";
+import { Category } from "../classes/Category/Category";
+import { SubCategory } from "../classes/SubCategory/SubCategory";
+import { Type } from "../classes/Type/Type";
 
-/** Department Surcharges
- * surchargeAmount -> % of Fee Total (Unit Price * Quantity)
- * addPercentage:
- *     True -> res = Fee Total + surchargeAmount
- *     False -> res = Fee Total - surchargeAmount
- *
- *      (e.g)
- *          i. Fee Total = 100
- *          ii. { surchargeAmount: .15, addPercentage: true }
- *          iii. res = 100 + (100 * .15) = 115
- */
-const SURCHARGE_MARKETING: DepartmentSurcharge = {
-  surchargeAmount: 0.1,
-  addPercentage: true,
-};
-
-const SURCHARGE_SALES: DepartmentSurcharge = {
-  surchargeAmount: 0.15,
-  addPercentage: true,
-};
-
-const SURCHARGE_DEVELOPMENT: DepartmentSurcharge = {
-  surchargeAmount: 0.2,
-  addPercentage: true,
-};
-
-const SURCHARGE_OPERATIONS: DepartmentSurcharge = {
-  surchargeAmount: 0.15,
-  addPercentage: false,
-};
-
-const SURCHARGE_SUPPORT: DepartmentSurcharge = {
-  surchargeAmount: 0.5,
-  addPercentage: false,
-};
+/* Existing Hierarchy */
+export type levels = Manager | Department | Category | SubCategory | Type;
 
 /* Valid Departments */
 export enum Departments {
@@ -45,7 +17,7 @@ export enum Departments {
   SUPPORT = "Support",
 }
 
-/* Department-contained categories - used to check if category is in a valid department */
+/* Categories of departments - Change based on outlined hierarchy structure as required */
 export enum MarketingCategory {
   ABM = "ABM",
 }
@@ -71,42 +43,92 @@ export enum SupportCategory {
   TIER_3 = "Tier 3",
 }
 
-/* Sub-categories of Categories */
+/* Subcategories of Categories */
 export enum SubCategories {
   CAT_1 = "Cat1",
   CAT_2 = "Cat2",
   CAT_3 = "Cat3",
 }
 
-/* Types of Sub-categories */
+/* Types of Subcategories */
 export enum Types {
   TYPE_A = "TypeA",
   TYPE_B = "TypeB",
   TYPE_C = "TypeC",
 }
 
+const SURCHARGE_MARKETING: DepartmentSurcharge = {
+  surchargeAmount: 0.1,
+  addPercentage: true,
+};
+
+const SURCHARGE_SALES: DepartmentSurcharge = {
+  surchargeAmount: 0.15,
+  addPercentage: true,
+};
+
+const SURCHARGE_DEVELOPMENT: DepartmentSurcharge = {
+  surchargeAmount: 0.2,
+  addPercentage: true,
+};
+
+const SURCHARGE_OPERATIONS: DepartmentSurcharge = {
+  surchargeAmount: 0.15,
+  addPercentage: false,
+};
+
+const SURCHARGE_SUPPORT: DepartmentSurcharge = {
+  surchargeAmount: 0.5,
+  addPercentage: false,
+};
+
+// Determines additional surchase to Fee Total based on Department - Used in Department.ts
+export const determineSurcharge = (department: string): DepartmentSurcharge => {
+  if (department === Departments.MARKETING) {
+    return { surchargeAmount: 10, addPercentage: true };
+  } else if (department === Departments.SALES) {
+    return { surchargeAmount: 15, addPercentage: true };
+  } else if (department === Departments.DEVELOPMENT) {
+    return { surchargeAmount: 20, addPercentage: true };
+  } else if (department === Departments.OPERATIONS) {
+    return { surchargeAmount: 15, addPercentage: false };
+  } else if (department === Departments.SUPPORT) {
+    return { surchargeAmount: 5, addPercentage: false };
+  } else {
+    return { surchargeAmount: 0, addPercentage: true };
+  }
+};
+
 /* Validates that current category is permitted to be in current department (e.g) QA category belongs to Development, not Support department*/
-export const isPermittedCategory = (category: string, department: string) => {
+export const isPermittedCategory = (
+  category: string,
+  department: string
+): boolean => {
   if (
     department === Departments.MARKETING &&
-    !(category in MarketingCategory)
+    !Object.values(MarketingCategory).includes(category as MarketingCategory)
   ) {
     return false;
-  } else if (department === Departments.SALES && !(category in SalesCategory)) {
+  } else if (
+    department === Departments.SALES &&
+    !Object.values(SalesCategory).includes(category as SalesCategory)
+  ) {
     return false;
   } else if (
     department === Departments.DEVELOPMENT &&
-    !(category in DevelopmentCategory)
+    !Object.values(DevelopmentCategory).includes(
+      category as DevelopmentCategory
+    )
   ) {
     return false;
   } else if (
     department === Departments.OPERATIONS &&
-    !(category in OperationsCategory)
+    !Object.values(OperationsCategory).includes(category as OperationsCategory)
   ) {
     return false;
   } else if (
     department === Departments.SUPPORT &&
-    !(category in SupportCategory)
+    !Object.values(SupportCategory).includes(category as SupportCategory)
   ) {
     return false;
   }
@@ -114,6 +136,9 @@ export const isPermittedCategory = (category: string, department: string) => {
   return true;
 };
 
+/**
+ * Returns enum values in format { enumVal1 / enumVal2 / ... / enumVal<n> }
+ */
 export const getAllEnumValuesAsString = <T extends Record<string, string>>(
   enumObj: T
 ): string => {

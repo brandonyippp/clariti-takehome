@@ -1,14 +1,14 @@
-import { Container } from "../interfaces/Container";
-import { Csv } from "../interfaces/Csv";
-import { SubCategory } from "./SubCategory";
+import { Container } from "../../interfaces/Container/Container";
+import { CsvRow } from "../../interfaces/CsvRow/CsvRow";
+import { SubCategory } from "../SubCategory/SubCategory";
 
 export class Category implements Container<SubCategory> {
+  private data: Map<string, SubCategory>;
   private numSubCategories: number;
-  public data: Map<string, SubCategory>;
-  public total: number;
-  public name: string;
+  private total: number;
+  private name: string;
 
-  constructor(current: Csv) {
+  constructor(current: CsvRow) {
     this.data = new Map<string, SubCategory>();
     this.name = current.Category__c;
     this.numSubCategories = 0;
@@ -18,7 +18,7 @@ export class Category implements Container<SubCategory> {
 
   /* Primary Functions */
 
-  public addNode(current: Csv): void {
+  public addNode(current: CsvRow): void {
     const category: string = current.Category__c;
     const subCategory: string = current.Sub_Category__c;
 
@@ -34,25 +34,33 @@ export class Category implements Container<SubCategory> {
 
   /* Helper Functions */
 
-  public proceed(current: Csv): void {
+  private proceed(current: CsvRow): void {
     this.data.get(current.Sub_Category__c)!.addNode(current);
   }
 
-  public addSubCategory(current: Csv): void {
+  private addSubCategory(current: CsvRow): void {
     this.data.set(current.Sub_Category__c, new SubCategory(current));
   }
 
   /* Getters & Setters */
 
-  public getFeeTotal(): number {
+  public getTotal(): number {
     return this.total;
   }
 
-  public setFeeTotal(childrenSum: number): void {
+  public setTotal(childrenSum: number): void {
     this.total = childrenSum;
   }
 
-  public getTotalSubCategories(): number {
+  public getName(): string {
+    return this.name;
+  }
+
+  public getData(): Map<string, SubCategory> {
+    return this.data;
+  }
+
+  public getNumChildren(): number {
     return this.numSubCategories;
   }
 }

@@ -1,16 +1,22 @@
-import { isPermittedCategory } from "../constants/constants";
-import { Container } from "../interfaces/Container";
-import { Csv } from "../interfaces/Csv";
-import { Category } from "./Category";
+import {
+  isPermittedCategory,
+  determineSurcharge,
+} from "../../constants/constants";
+import { DepartmentSurcharge } from "../../interfaces/Surcharge/Surcharge";
+import { Container } from "../../interfaces/Container/Container";
+import { CsvRow } from "../../interfaces/CsvRow/CsvRow";
+import { Category } from "../Category/Category";
 
 export class Department implements Container<Category> {
+  private surcharge: DepartmentSurcharge;
+  private data: Map<string, Category>;
   private numCategories: number;
-  private invalidData: Csv[];
-  public data: Map<string, Category>;
-  public total: number;
-  public name: string;
+  private invalidData: CsvRow[];
+  private total: number;
+  private name: string;
 
-  constructor(current: Csv, invalidData: Csv[]) {
+  constructor(current: CsvRow, invalidData: CsvRow[]) {
+    this.surcharge = determineSurcharge(current.Department__c);
     this.data = new Map<string, Category>();
     this.name = current.Department__c;
     this.invalidData = invalidData;
@@ -21,12 +27,12 @@ export class Department implements Container<Category> {
 
   /* Primary Functions */
 
-  public addNode(current: Csv): void {
+  public addNode(current: CsvRow): void {
     const department: string = current.Department__c;
     const category: string = current.Category__c;
 
     if (!isPermittedCategory(category, department)) {
-      this.addInvalidData(current);
+      this.processInvalidData(current);
     } else if (this.data.has(category)) {
       this.proceed(current);
     } else if (!this.data.has(category)) {
@@ -39,15 +45,15 @@ export class Department implements Container<Category> {
 
   /* Helper Functions */
 
-  public proceed(current: Csv): void {
+  private proceed(current: CsvRow): void {
     this.data.get(current.Category__c)!.addNode(current);
   }
 
-  public addCategory(current: Csv): void {
+  private addCategory(current: CsvRow): void {
     this.data.set(current.Category__c, new Category(current));
   }
 
-  public addInvalidData(current: Csv): void {
+  private processInvalidData(current: CsvRow): void {
     this.invalidData.push({
       ...current,
       reason: `Category ${current.Category__c} not valid for Department ${current.Department__c}.`,
@@ -56,19 +62,27 @@ export class Department implements Container<Category> {
 
   /* Getters & Setters */
 
-  public getFeeTotal(): number {
+  public getTotal(): number {
     return this.total;
-  }
-
-  public setFeeTotal(childrenSum: number): void {
-    this.total = childrenSum;
   }
 
   public setTotal(childrenSum: number): void {
     this.total = childrenSum;
   }
 
-  public getTotalCategories(): number {
+  public getName(): string {
+    return this.name;
+  }
+
+  public getData(): Map<string, Category> {
+    return this.data;
+  }
+
+  public getNumChildren(): number {
     return this.numCategories;
+  }
+
+  public getSurcharge(): DepartmentSurcharge {
+    return this.surcharge;
   }
 }

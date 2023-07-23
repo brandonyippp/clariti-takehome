@@ -1,4 +1,4 @@
-export interface Csv {
+export interface CsvRow {
   Id: string;
   Name: string;
   Description__c: string;
