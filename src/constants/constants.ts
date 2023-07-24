@@ -57,43 +57,17 @@ export enum Types {
   TYPE_C = "TypeC",
 }
 
-const SURCHARGE_MARKETING: DepartmentSurcharge = {
-  surchargeAmount: 0.1,
-  addPercentage: true,
-};
-
-const SURCHARGE_SALES: DepartmentSurcharge = {
-  surchargeAmount: 0.15,
-  addPercentage: true,
-};
-
-const SURCHARGE_DEVELOPMENT: DepartmentSurcharge = {
-  surchargeAmount: 0.2,
-  addPercentage: true,
-};
-
-const SURCHARGE_OPERATIONS: DepartmentSurcharge = {
-  surchargeAmount: 0.15,
-  addPercentage: false,
-};
-
-const SURCHARGE_SUPPORT: DepartmentSurcharge = {
-  surchargeAmount: 0.5,
-  addPercentage: false,
-};
-
-// Determines additional surchase to Fee Total based on Department - Used in Department.ts
 export const determineSurcharge = (department: string): DepartmentSurcharge => {
   if (department === Departments.MARKETING) {
-    return { surchargeAmount: 10, addPercentage: true };
+    return { surchargeAmount: 0.1, addPercentage: true };
   } else if (department === Departments.SALES) {
-    return { surchargeAmount: 15, addPercentage: true };
+    return { surchargeAmount: 0.15, addPercentage: true };
   } else if (department === Departments.DEVELOPMENT) {
-    return { surchargeAmount: 20, addPercentage: true };
+    return { surchargeAmount: 0.2, addPercentage: true };
   } else if (department === Departments.OPERATIONS) {
-    return { surchargeAmount: 15, addPercentage: false };
+    return { surchargeAmount: 0.1, addPercentage: false };
   } else if (department === Departments.SUPPORT) {
-    return { surchargeAmount: 5, addPercentage: false };
+    return { surchargeAmount: 0.05, addPercentage: false };
   } else {
     return { surchargeAmount: 0, addPercentage: true };
   }
@@ -149,12 +123,4 @@ export const getAllEnumValuesAsString = <T extends Record<string, string>>(
 
   res += "}";
   return res;
-};
-
-export default {
-  SURCHARGE_MARKETING,
-  SURCHARGE_SALES,
-  SURCHARGE_DEVELOPMENT,
-  SURCHARGE_OPERATIONS,
-  SURCHARGE_SUPPORT,
 };

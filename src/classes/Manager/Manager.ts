@@ -12,10 +12,12 @@ export class Manager implements Container<Department> {
   private data: Map<string, Department>;
   private numDepartments: number;
   private invalidData: CsvRow[];
+  private surchargeTotal: number;
   private total: number;
 
   constructor() {
     this.data = new Map<string, Department>();
+    this.surchargeTotal = 0;
     this.numDepartments = 0;
     this.invalidData = [];
     this.total = 0;
@@ -104,8 +106,24 @@ export class Manager implements Container<Department> {
     return this.total;
   }
 
+  public getSurchargeTotal(): number {
+    return this.surchargeTotal;
+  }
+
   public setTotal(childrenSum: number): void {
     this.total = childrenSum;
+    this.surchargeTotal = this.setTotalHelper();
+  }
+
+  // Assign surcharges for top-level container
+  private setTotalHelper(): number {
+    let surchargeTotal: number = 0;
+    this.data.forEach(
+      (value: levels, key: string) =>
+        (surchargeTotal += this.data.get(key)!.getSurchargeTotal())
+    );
+
+    return surchargeTotal;
   }
 
   public getData(): Map<string, Department> {
@@ -115,4 +133,18 @@ export class Manager implements Container<Department> {
   public getNumChildren(): number {
     return this.numDepartments;
   }
+
+  // //TODO: bug only if we display all possible Types instead of only those that exist (imagine typeA and typeB exist, and we list typeC. we then try to access map.get(typeC)) and it fails
+  // public getChildTotal(
+  //   levelObj: levels,
+  //   steps: string[],
+  //   index: number
+  // ): number {
+  //   const currentLevelData: Map<string, levels> = levelObj.getData();
+
+  //   /**
+  //    *
+  //    * If empty -> return all  department total, aka this.total
+  //    */
+  // }
 }

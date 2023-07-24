@@ -13,6 +13,7 @@ export class Department implements Container<Category> {
   private numCategories: number;
   private invalidData: CsvRow[];
   private total: number;
+  private surchargeTotal: number;
   private name: string;
 
   constructor(current: CsvRow, invalidData: CsvRow[]) {
@@ -20,6 +21,7 @@ export class Department implements Container<Category> {
     this.data = new Map<string, Category>();
     this.name = current.Department__c;
     this.invalidData = invalidData;
+    this.surchargeTotal = 0;
     this.numCategories = 0;
     this.total = 0;
     this.addNode(current);
@@ -68,6 +70,18 @@ export class Department implements Container<Category> {
 
   public setTotal(childrenSum: number): void {
     this.total = childrenSum;
+
+    if (this.surcharge.addPercentage) {
+      this.surchargeTotal =
+        childrenSum + this.total * this.surcharge.surchargeAmount;
+    } else {
+      this.surchargeTotal =
+        childrenSum - this.total * this.surcharge.surchargeAmount;
+    }
+  }
+
+  public getSurchargeTotal(): number {
+    return this.surchargeTotal;
   }
 
   public getName(): string {
@@ -80,9 +94,5 @@ export class Department implements Container<Category> {
 
   public getNumChildren(): number {
     return this.numCategories;
-  }
-
-  public getSurcharge(): DepartmentSurcharge {
-    return this.surcharge;
   }
 }

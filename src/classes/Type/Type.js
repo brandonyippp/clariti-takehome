@@ -34,7 +34,7 @@ var Type = /** @class */ (function () {
     };
     /* Helper Functions */
     Type.prototype.printDataIntro = function () {
-        console.log("Data for the following section:\n\tDepartment: ".concat(this.department, "\n\tCategory: ").concat(this.category, "\n\tSub-category: ").concat(this.subCategory, "\n\tType: ").concat(this.type));
+        console.log("Data for the following section:\n\tDepartment: ".concat(this.department, "\n\tCategory: ").concat(this.category, "\n\tSubcategory: ").concat(this.subCategory, "\n\tType: ").concat(this.type));
     };
     Type.prototype.printDataFields = function (i) {
         console.log("Id: ".concat(this.data[i].Id, ", Name: ").concat(this.data[i].Name, ", Quantity: ").concat(this.data[i].Quantity__c, ", Unit Price: ").concat(this.data[i].Unit_Price__c));
