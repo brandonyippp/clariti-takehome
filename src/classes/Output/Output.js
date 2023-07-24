@@ -37,21 +37,20 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Output = void 0;
-var readline = require("readline");
+var constants_1 = require("../../constants/constants");
 var Type_1 = require("../Type/Type");
-var rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-});
+var Manager_1 = require("../Manager/Manager");
+var Category_1 = require("../Category/Category");
+var SubCategory_1 = require("../SubCategory/SubCategory");
 var Output = /** @class */ (function () {
-    function Output() {
-        /* Helper Functions */
+    function Output(rl) {
         this.commaSeparateNonDecimal = function (number) {
             var numberStr = number.toString();
             var parts = numberStr.split(".");
             parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
             return parts.join(".");
         };
+        this.rl = rl;
         this.steps = 0;
         this.userResponse = "";
     }
@@ -71,8 +70,8 @@ var Output = /** @class */ (function () {
             return __generator(this, function (_a) {
                 return [2 /*return*/, new Promise(function (resolve, reject) {
                         var ask = function () {
-                            rl.question(question, function (answer) {
-                                var isValidInput = _this.isValidInput(answer, dataLength);
+                            _this.rl.question(question, function (answer) {
+                                var isValidInput = _this.isValidInput(answer, dataLength, intermediate ? intermediate : null);
                                 if (isValidInput) {
                                     if (!intermediate) {
                                         _this.steps = parseInt(answer) - 1;
@@ -81,8 +80,7 @@ var Output = /** @class */ (function () {
                                     resolve(answer);
                                 }
                                 else if (isValidInput === null) {
-                                    rl.close();
-                                    reject(new Error("User exiting program"));
+                                    reject(new Error(constants_1.USER_EXITING_PROGRAM));
                                 }
                                 else {
                                     console.log("Invalid input received. Please try again.");
@@ -95,9 +93,10 @@ var Output = /** @class */ (function () {
             });
         });
     };
-    Output.prototype.isValidInput = function (answer, dataLength) {
+    Output.prototype.isValidInput = function (answer, dataLength, intermediate) {
         var answerAsNumber = parseInt(answer);
-        if (answer.toLowerCase() === "exit") {
+        if (answer.toLowerCase() === "exit" ||
+            (answerAsNumber === dataLength && !intermediate)) {
             return null;
         }
         else if (
@@ -110,8 +109,29 @@ var Output = /** @class */ (function () {
         return true;
     };
     Output.prototype.printFeeTotals = function (currentLevel) {
-        console.log("*** Fee total without surplus: $".concat(this.commaSeparateNonDecimal(currentLevel.getTotal()), " ***"));
-        console.log("*** Fee total with surplus: $".concat(this.commaSeparateNonDecimal(currentLevel.getSurchargeTotal()), " ***\n\n"));
+        console.log("".concat(this.extractExistingFields(currentLevel)));
+        console.log("\t 1) Fee total without surplus: $".concat(this.commaSeparateNonDecimal(currentLevel.getTotal()), " "));
+        console.log("\t 2) Fee total with surplus: $".concat(this.commaSeparateNonDecimal(currentLevel.getSurchargeTotal()), " \n"));
+    };
+    /* Helper Functions */
+    Output.prototype.extractExistingFields = function (currentLevel) {
+        var res = "";
+        if (currentLevel instanceof Manager_1.Manager) {
+            res += "Results for all departments";
+        }
+        else {
+            res += "Results for Department - ".concat(currentLevel.getDepartment());
+            if (currentLevel instanceof Category_1.Category) {
+                res += ", Category - ".concat(currentLevel.getCategory());
+            }
+            else if (currentLevel instanceof SubCategory_1.SubCategory) {
+                res += ", Category - ".concat(currentLevel.getCategory(), ", SubCategory - ").concat(currentLevel.getSubCategory());
+            }
+            else if (currentLevel instanceof Type_1.Type) {
+                res += ", Category - ".concat(currentLevel.getCategory(), ", SubCategory - ").concat(currentLevel.getSubCategory(), ", Type - ").concat(currentLevel.getType());
+            }
+        }
+        return res + ":";
     };
     Output.prototype.constructMenu = function (data) {
         var menu;

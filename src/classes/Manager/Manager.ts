@@ -3,6 +3,7 @@ import {
   getAllEnumValuesAsString,
   levels,
 } from "../../constants/constants";
+import { SurchargeAmount } from "../../interfaces/Surcharge/Surcharge";
 import { Container } from "../../interfaces/Container/Container";
 import { CsvRow } from "../../interfaces/CsvRow/CsvRow";
 import { Department } from "../Department/Department";
@@ -11,15 +12,15 @@ import { Type } from "../Type/Type";
 export class Manager implements Container<Department> {
   private data: Map<string, Department>;
   private numDepartments: number;
-  private invalidData: CsvRow[];
   private surchargeTotal: number;
+  private invalidData: CsvRow[];
   private total: number;
 
   constructor() {
     this.data = new Map<string, Department>();
     this.numDepartments = 0;
-    this.invalidData = [];
     this.surchargeTotal = 0;
+    this.invalidData = [];
     this.total = 0;
   }
 
@@ -35,15 +36,11 @@ export class Manager implements Container<Department> {
     } else if (!this.data.has(department)) {
       this.addDepartment(current);
     } else {
-      //TODO: Probably won't happen, but maybe think of something to do here
-      console.log(`Manager failed to add ${department}.`);
+      throw new Error(`Failed to add JSON.stringify${current}`);
     }
   }
 
-  public establishTotals(levelObj: levels): {
-    total: number;
-    surchargeTotal: number;
-  } {
+  public establishTotals(levelObj: levels): SurchargeAmount {
     // Adjust to bottom levelObj of hierarchy as needed
     if (levelObj instanceof Type) {
       return {
@@ -52,18 +49,18 @@ export class Manager implements Container<Department> {
       };
     }
 
-    let total: number = 0;
-    let surchargeTotal: number = 0;
     const currentLevelData: Map<string, levels> = levelObj.getData();
+    let surchargeTotal: number = 0;
+    let total: number = 0;
 
     currentLevelData.forEach((value: levels, key: string) => {
       const obj = this.establishTotals(currentLevelData.get(key)!);
-      total += obj.total;
       surchargeTotal += obj.surchargeTotal;
+      total += obj.total;
     });
 
-    levelObj.setTotal(total);
     levelObj.setSurchargeTotal(surchargeTotal);
+    levelObj.setTotal(total);
     return { total, surchargeTotal };
   }
 
@@ -82,11 +79,11 @@ export class Manager implements Container<Department> {
 
   /* Helper Functions */
 
-  public proceed(current: CsvRow): void {
+  private proceed(current: CsvRow): void {
     this.data.get(current.Department__c)!.addNode(current);
   }
 
-  public addDepartment(current: CsvRow): void {
+  private addDepartment(current: CsvRow): void {
     this.data.set(
       current.Department__c,
       new Department(current, this.invalidData)
@@ -94,7 +91,7 @@ export class Manager implements Container<Department> {
     this.numDepartments++;
   }
 
-  public processInvalidData(current: CsvRow): void {
+  private processInvalidData(current: CsvRow): void {
     this.invalidData.push({
       ...current,
       reason: `Department ${

@@ -5,18 +5,18 @@ import { Category } from "../Category/Category";
 
 export class Department implements Container<Category> {
   private data: Map<string, Category>;
+  private surchargeTotal: number;
   private numCategories: number;
   private invalidData: CsvRow[];
-  private surchargeTotal: number;
-  private total: number;
   private department: string;
+  private total: number;
 
   constructor(current: CsvRow, invalidData: CsvRow[]) {
     this.data = new Map<string, Category>();
     this.department = current.Department__c;
     this.invalidData = invalidData;
-    this.numCategories = 0;
     this.surchargeTotal = 0;
+    this.numCategories = 0;
     this.total = 0;
     this.addNode(current);
   }
@@ -35,8 +35,7 @@ export class Department implements Container<Category> {
       this.addCategory(current);
       this.numCategories++;
     } else {
-      //TODO: Probably won't happen, but maybe think of something to do here
-      console.log(`Department ${department} failed to add ${category}.`);
+      throw new Error(`Failed to add JSON.stringify${current}`);
     }
   }
 

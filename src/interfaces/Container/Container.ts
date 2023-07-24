@@ -12,11 +12,9 @@ export interface Container<T> {
 
   setTotal(childrenSum: number): void; // Fee total
 
-  getSurchargeTotal(): number;
+  getSurchargeTotal(): number; // Fee Total +/- surcharge %
 
-  setSurchargeTotal(childrenSum: number): void;
-
-  getName?(): string; // Identifier of <department/category/subcategory/type>
+  setSurchargeTotal(childrenSum: number): void; // Fee Total +/- surcharge %
 
   getData(): Map<string, levels>; // Hashmap between <string, Department | Category | SubCategory | Type>
 

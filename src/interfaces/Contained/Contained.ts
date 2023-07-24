@@ -5,8 +5,6 @@ export interface Contained {
 
   addRow(current: CsvRow): void;
 
-  printData(): void;
-
   /* Getters & Setters */
 
   getTotal(): number;

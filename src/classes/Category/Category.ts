@@ -6,9 +6,9 @@ export class Category implements Container<SubCategory> {
   private data: Map<string, SubCategory>;
   private numSubCategories: number;
   private surchargeTotal: number;
-  private total: number;
   private department: string;
   private category: string;
+  private total: number;
 
   constructor(current: CsvRow, department: string) {
     this.data = new Map<string, SubCategory>();
@@ -23,17 +23,15 @@ export class Category implements Container<SubCategory> {
   /* Primary Functions */
 
   public addNode(current: CsvRow): void {
-    const category: string = current.Category__c;
     const subCategory: string = current.Sub_Category__c;
 
     if (this.data.has(subCategory)) {
       this.proceed(current);
-    } else if (!this.data.has(category)) {
+    } else if (!this.data.has(subCategory)) {
       this.addSubCategory(current);
       this.numSubCategories++;
     } else {
-      //TODO: Probably won't happen, but maybe think of something to do here
-      console.log(`Category ${category} failed to add ${subCategory}.`);
+      throw new Error(`Failed to add JSON.stringify${current}`);
     }
   }
 

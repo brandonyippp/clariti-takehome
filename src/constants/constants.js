@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllEnumValuesAsString = exports.isPermittedCategory = exports.determineSurcharge = exports.calculateSurcharge = exports.Types = exports.SubCategories = exports.SupportCategory = exports.OperationsCategory = exports.DevelopmentCategory = exports.SalesCategory = exports.MarketingCategory = exports.Departments = void 0;
+exports.getAllEnumValuesAsString = exports.isPermittedCategory = exports.determineSurcharge = exports.calculateSurcharge = exports.Types = exports.SubCategories = exports.SupportCategory = exports.OperationsCategory = exports.DevelopmentCategory = exports.SalesCategory = exports.MarketingCategory = exports.Departments = exports.USER_EXITING_PROGRAM = void 0;
+exports.USER_EXITING_PROGRAM = "User Exiting Program.";
 /* Valid Departments */
 var Departments;
 (function (Departments) {

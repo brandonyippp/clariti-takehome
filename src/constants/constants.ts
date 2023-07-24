@@ -1,9 +1,11 @@
 import { DepartmentSurcharge } from "../interfaces/Surcharge/Surcharge";
-import { Manager } from "../classes/Manager/Manager";
+import { SubCategory } from "../classes/SubCategory/SubCategory";
 import { Department } from "../classes/Department/Department";
 import { Category } from "../classes/Category/Category";
-import { SubCategory } from "../classes/SubCategory/SubCategory";
+import { Manager } from "../classes/Manager/Manager";
 import { Type } from "../classes/Type/Type";
+
+export const USER_EXITING_PROGRAM = "Exiting program.";
 
 /* Existing Hierarchy */
 export type levels = Manager | Department | Category | SubCategory | Type;
@@ -56,6 +58,8 @@ export enum Types {
   TYPE_B = "TypeB",
   TYPE_C = "TypeC",
 }
+
+/* Functions */
 
 export const calculateSurcharge = (
   total: number,

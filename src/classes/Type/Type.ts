@@ -3,18 +3,18 @@ import { Contained } from "../../interfaces/Contained/Contained";
 import { CsvRow } from "../../interfaces/CsvRow/CsvRow";
 
 export class Type implements Contained {
+  private surchargeTotal: number;
+  private subCategory: string;
   private department: string;
   private category: string;
-  private subCategory: string;
-  private type: string;
-  private surchargeTotal: number;
   private total: number;
+  private type: string;
   private data: CsvRow[];
 
   constructor(current: CsvRow) {
+    this.subCategory = current.Sub_Category__c;
     this.department = current.Department__c;
     this.category = current.Category__c;
-    this.subCategory = current.Sub_Category__c;
     this.type = current.Type__c;
     this.surchargeTotal = 0;
     this.total = 0;
@@ -25,42 +25,15 @@ export class Type implements Contained {
   /* Primary Functions */
 
   public addRow(current: CsvRow): void {
-    const quantity: number = current.Quantity__c;
     const unitPrice: number = current.Unit_Price__c;
+    const quantity: number = current.Quantity__c;
 
     this.data.push(current);
     this.total += unitPrice * quantity;
     this.surchargeTotal = calculateSurcharge(this.total, this.department);
   }
 
-  /* Displays all .csv data for current hierarchy bucket
-    (e.g)
-      -Development
-        -Coding
-          -Cat1
-            -TypeA
-  */
-  public printData(): void {
-    this.printDataIntro();
-    for (let i = 0; i < this.data.length; i++) {
-      this.printDataFields(i);
-    }
-    console.log(`\n`);
-  }
-
   /* Helper Functions */
-
-  private printDataIntro(): void {
-    console.log(
-      `Data for the following section:\n\tDepartment: ${this.department}\n\tCategory: ${this.category}\n\tSubcategory: ${this.subCategory}\n\tType: ${this.type}`
-    );
-  }
-
-  private printDataFields(i: number): void {
-    console.log(
-      `Id: ${this.data[i].Id}, Name: ${this.data[i].Name}, Quantity: ${this.data[i].Quantity__c}, Unit Price: ${this.data[i].Unit_Price__c}`
-    );
-  }
 
   /* Getters & Setters */
 

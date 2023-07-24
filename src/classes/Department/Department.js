@@ -19,8 +19,8 @@ var Department = /** @class */ (function () {
         this.data = new Map();
         this.department = current.Department__c;
         this.invalidData = invalidData;
-        this.numCategories = 0;
         this.surchargeTotal = 0;
+        this.numCategories = 0;
         this.total = 0;
         this.addNode(current);
     }
@@ -39,8 +39,7 @@ var Department = /** @class */ (function () {
             this.numCategories++;
         }
         else {
-            //TODO: Probably won't happen, but maybe think of something to do here
-            console.log("Department ".concat(department, " failed to add ").concat(category, "."));
+            throw new Error("Failed to add JSON.stringify".concat(current));
         }
     };
     /* Helper Functions */

@@ -19,8 +19,8 @@ var Manager = /** @class */ (function () {
     function Manager() {
         this.data = new Map();
         this.numDepartments = 0;
-        this.invalidData = [];
         this.surchargeTotal = 0;
+        this.invalidData = [];
         this.total = 0;
     }
     /* Primary Functions */
@@ -36,8 +36,7 @@ var Manager = /** @class */ (function () {
             this.addDepartment(current);
         }
         else {
-            //TODO: Probably won't happen, but maybe think of something to do here
-            console.log("Manager failed to add ".concat(department, "."));
+            throw new Error("Failed to add JSON.stringify".concat(current));
         }
     };
     Manager.prototype.establishTotals = function (levelObj) {
@@ -49,16 +48,16 @@ var Manager = /** @class */ (function () {
                 surchargeTotal: levelObj.getSurchargeTotal(),
             };
         }
-        var total = 0;
-        var surchargeTotal = 0;
         var currentLevelData = levelObj.getData();
+        var surchargeTotal = 0;
+        var total = 0;
         currentLevelData.forEach(function (value, key) {
             var obj = _this.establishTotals(currentLevelData.get(key));
-            total += obj.total;
             surchargeTotal += obj.surchargeTotal;
+            total += obj.total;
         });
-        levelObj.setTotal(total);
         levelObj.setSurchargeTotal(surchargeTotal);
+        levelObj.setTotal(total);
         return { total: total, surchargeTotal: surchargeTotal };
     };
     /* Print any .csv rows that either:

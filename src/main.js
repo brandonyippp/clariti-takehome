@@ -36,19 +36,24 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var CsvProcessor_1 = require("./utils/CsvProcessor");
 var Manager_1 = require("./classes/Manager/Manager");
 var Output_1 = require("./classes/Output/Output");
 var Type_1 = require("./classes/Type/Type");
-var CsvProcessor_1 = require("./utils/CsvProcessor");
+var readline = require("readline");
+var rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+});
 var filePath = "../data/raw_fees.csv";
 var main = function () { return __awaiter(void 0, void 0, void 0, function () {
-    var csvProcessor, manager, output, currentLevel, userChoice, introOptions, steps, i, arr, error_1;
+    var csvProcessor, manager, output, currentLevel, userChoice, introOptions, steps, i, levelKeys, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 csvProcessor = new CsvProcessor_1.CsvProcessor();
                 manager = new Manager_1.Manager();
-                output = new Output_1.Output();
+                output = new Output_1.Output(rl);
                 csvProcessor.processFile(filePath, manager);
                 currentLevel = manager;
                 introOptions = [
@@ -78,10 +83,11 @@ var main = function () { return __awaiter(void 0, void 0, void 0, function () {
                 return [4 /*yield*/, output.askQuestion(output.constructMenu(currentLevel), currentLevel.getNumChildren(), true)];
             case 5:
                 _a.sent();
+                /* If you're within a 'Container' class still (aka not at the bottom of hierarchy), retrieve the next subset */
                 if (!(currentLevel instanceof Type_1.Type)) {
                     userChoice = parseInt(output.getUserResponse());
-                    arr = Array.from(currentLevel.getData().keys());
-                    currentLevel = currentLevel.getData().get(arr[userChoice - 1]);
+                    levelKeys = Array.from(currentLevel.getData().keys());
+                    currentLevel = currentLevel.getData().get(levelKeys[userChoice - 1]);
                 }
                 _a.label = 6;
             case 6:
@@ -94,11 +100,11 @@ var main = function () { return __awaiter(void 0, void 0, void 0, function () {
                 return [3 /*break*/, 9];
             case 8:
                 error_1 = _a.sent();
-                //   console.log(error);
+                console.log(error_1 instanceof Error ? error_1.message : error_1);
                 return [3 /*break*/, 10];
             case 9: return [3 /*break*/, 1];
             case 10:
-                console.log("Exiting program.");
+                rl.close();
                 return [2 /*return*/];
         }
     });

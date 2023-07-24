@@ -8,14 +8,13 @@ var SubCategory = /** @class */ (function () {
         this.department = current.Department__c;
         this.category = current.Category__c;
         this.data = new Map();
-        this.numTypes = 0;
         this.surchargeTotal = 0;
+        this.numTypes = 0;
         this.total = 0;
         this.addNode(current);
     }
     /* Primary Functions */
     SubCategory.prototype.addNode = function (current) {
-        var subCategory = current.Sub_Category__c;
         var type = current.Type__c;
         if (this.data.has(type)) {
             this.proceed(current);
@@ -25,8 +24,7 @@ var SubCategory = /** @class */ (function () {
             this.numTypes++;
         }
         else {
-            //TODO: Probably won't happen, but maybe think of something to do here
-            console.log("Subcategory ".concat(subCategory, " failed to add ").concat(type, "."));
+            throw new Error("Failed to add JSON.stringify".concat(current));
         }
     };
     /* Helper Functions */

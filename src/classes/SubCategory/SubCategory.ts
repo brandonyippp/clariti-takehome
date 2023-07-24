@@ -4,20 +4,20 @@ import { Type } from "../Type/Type";
 
 export class SubCategory implements Container<Type> {
   private data: Map<string, Type>;
-  private numTypes: number;
   private surchargeTotal: number;
-  private total: number;
+  private subCategory: string;
   private department: string;
   private category: string;
-  private subCategory: string;
+  private numTypes: number;
+  private total: number;
 
   constructor(current: CsvRow) {
     this.subCategory = current.Sub_Category__c;
     this.department = current.Department__c;
     this.category = current.Category__c;
     this.data = new Map<string, Type>();
-    this.numTypes = 0;
     this.surchargeTotal = 0;
+    this.numTypes = 0;
     this.total = 0;
     this.addNode(current);
   }
@@ -25,7 +25,6 @@ export class SubCategory implements Container<Type> {
   /* Primary Functions */
 
   public addNode(current: CsvRow): void {
-    const subCategory: string = current.Sub_Category__c;
     const type: string = current.Type__c;
 
     if (this.data.has(type)) {
@@ -34,8 +33,7 @@ export class SubCategory implements Container<Type> {
       this.addType(current);
       this.numTypes++;
     } else {
-      //TODO: Probably won't happen, but maybe think of something to do here
-      console.log(`Subcategory ${subCategory} failed to add ${type}.`);
+      throw new Error(`Failed to add JSON.stringify${current}`);
     }
   }
 

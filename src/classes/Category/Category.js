@@ -14,18 +14,16 @@ var Category = /** @class */ (function () {
     }
     /* Primary Functions */
     Category.prototype.addNode = function (current) {
-        var category = current.Category__c;
         var subCategory = current.Sub_Category__c;
         if (this.data.has(subCategory)) {
             this.proceed(current);
         }
-        else if (!this.data.has(category)) {
+        else if (!this.data.has(subCategory)) {
             this.addSubCategory(current);
             this.numSubCategories++;
         }
         else {
-            //TODO: Probably won't happen, but maybe think of something to do here
-            console.log("Category ".concat(category, " failed to add ").concat(subCategory, "."));
+            throw new Error("Failed to add JSON.stringify".concat(current));
         }
     };
     /* Helper Functions */

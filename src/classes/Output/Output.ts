@@ -1,17 +1,17 @@
+import { levels, USER_EXITING_PROGRAM } from "../../constants/constants";
 import * as readline from "readline";
 import { Type } from "../Type/Type";
-import { levels } from "../../constants/constants";
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+import { Manager } from "../Manager/Manager";
+import { Category } from "../Category/Category";
+import { SubCategory } from "../SubCategory/SubCategory";
 
 export class Output {
-  private steps: number;
+  private rl: readline.Interface;
   private userResponse: string;
+  private steps: number;
 
-  constructor() {
+  constructor(rl: readline.Interface) {
+    this.rl = rl;
     this.steps = 0;
     this.userResponse = "";
   }
@@ -61,8 +61,12 @@ export class Output {
   ): Promise<string> {
     return new Promise<string>((resolve, reject) => {
       const ask = () => {
-        rl.question(question, (answer) => {
-          const isValidInput = this.isValidInput(answer, dataLength);
+        this.rl.question(question, (answer) => {
+          const isValidInput = this.isValidInput(
+            answer,
+            dataLength,
+            intermediate ? intermediate : null
+          );
           if (isValidInput) {
             if (!intermediate) {
               this.steps = parseInt(answer) - 1;
@@ -71,8 +75,7 @@ export class Output {
             this.userResponse = answer;
             resolve(answer);
           } else if (isValidInput === null) {
-            rl.close();
-            reject(new Error("User exiting program"));
+            reject(new Error(USER_EXITING_PROGRAM));
           } else {
             console.log(`Invalid input received. Please try again.`);
             ask();
@@ -84,9 +87,16 @@ export class Output {
     });
   }
 
-  private isValidInput(answer: string, dataLength: number): boolean | null {
+  private isValidInput(
+    answer: string,
+    dataLength: number,
+    intermediate: boolean | null
+  ): boolean | null {
     const answerAsNumber: number = parseInt(answer);
-    if (answer.toLowerCase() === "exit") {
+    if (
+      answer.toLowerCase() === "exit" ||
+      (answerAsNumber === dataLength && !intermediate)
+    ) {
       return null;
     } else if (
       // Input wasn't a number or wasn't a valid numeric selection from given menu
@@ -101,20 +111,41 @@ export class Output {
   }
 
   public printFeeTotals(currentLevel: levels): void {
+    console.log(`${this.extractExistingFields(currentLevel)}`);
     console.log(
-      `*** Fee total without surplus: $${this.commaSeparateNonDecimal(
+      `\t 1) Fee total without surplus: $${this.commaSeparateNonDecimal(
         currentLevel.getTotal()
-      )} ***`
+      )} `
     );
 
     console.log(
-      `*** Fee total with surplus: $${this.commaSeparateNonDecimal(
+      `\t 2) Fee total with surplus: $${this.commaSeparateNonDecimal(
         currentLevel.getSurchargeTotal()
-      )} ***\n\n`
+      )} \n`
     );
   }
 
   /* Helper Functions */
+
+  private extractExistingFields(currentLevel: levels): string {
+    let res = ``;
+
+    if (currentLevel instanceof Manager) {
+      res += `Results for all departments`;
+    } else {
+      res += `Results for Department - ${currentLevel.getDepartment()}`;
+
+      if (currentLevel instanceof Category) {
+        res += `, Category - ${currentLevel.getCategory()}`;
+      } else if (currentLevel instanceof SubCategory) {
+        res += `, Category - ${currentLevel.getCategory()}, SubCategory - ${currentLevel.getSubCategory()}`;
+      } else if (currentLevel instanceof Type) {
+        res += `, Category - ${currentLevel.getCategory()}, SubCategory - ${currentLevel.getSubCategory()}, Type - ${currentLevel.getType()}`;
+      }
+    }
+
+    return res + `:`;
+  }
 
   private commaSeparateNonDecimal = (number: number): string => {
     const numberStr: string = number.toString();
