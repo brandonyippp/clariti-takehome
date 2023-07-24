@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Type = void 0;
-var constants_1 = require("../../constants/constants");
-var Type = /** @class */ (function () {
-    function Type(current) {
+const constants_1 = require("../../constants/constants");
+class Type {
+    constructor(current) {
         this.subCategory = current.Sub_Category__c;
         this.department = current.Department__c;
         this.category = current.Category__c;
@@ -14,37 +14,36 @@ var Type = /** @class */ (function () {
         this.addRow(current);
     }
     /* Primary Functions */
-    Type.prototype.addRow = function (current) {
-        var unitPrice = current.Unit_Price__c;
-        var quantity = current.Quantity__c;
+    addRow(current) {
+        const unitPrice = current.Unit_Price__c;
+        const quantity = current.Quantity__c;
         this.data.push(current);
         this.total += unitPrice * quantity;
         this.surchargeTotal = (0, constants_1.calculateSurcharge)(this.total, this.department);
-    };
+    }
     /* Helper Functions */
     /* Getters & Setters */
-    Type.prototype.getTotal = function () {
+    getTotal() {
         return this.total;
-    };
-    Type.prototype.getSurchargeTotal = function () {
+    }
+    getSurchargeTotal() {
         return this.surchargeTotal;
-    };
+    }
     // Returns number of .csv rows that were labelled as either Type<A/B/C>
-    Type.prototype.getDataSize = function () {
+    getDataSize() {
         return this.data.length;
-    };
-    Type.prototype.getDepartment = function () {
+    }
+    getDepartment() {
         return this.department;
-    };
-    Type.prototype.getCategory = function () {
+    }
+    getCategory() {
         return this.category;
-    };
-    Type.prototype.getSubCategory = function () {
+    }
+    getSubCategory() {
         return this.subCategory;
-    };
-    Type.prototype.getType = function () {
+    }
+    getType() {
         return this.type;
-    };
-    return Type;
-}());
+    }
+}
 exports.Type = Type;

@@ -1,6 +1,11 @@
 import { levels } from "../../constants/constants";
 import { CsvRow } from "../CsvRow/CsvRow";
 
+/**
+ * T = Next level in hierarchy (e.g Department.ts <T> = Category)
+ * -Department
+ *    -Category
+ */
 export interface Container<T> {
   /* Primary Functions */
 

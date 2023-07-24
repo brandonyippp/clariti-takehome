@@ -45,14 +45,14 @@ export enum SupportCategory {
   TIER_3 = "Tier 3",
 }
 
-/* Subcategories of Categories */
+/* Subcategories of Categories -> Assumption that this can expand upwards in the future */
 export enum SubCategories {
   CAT_1 = "Cat1",
   CAT_2 = "Cat2",
   CAT_3 = "Cat3",
 }
 
-/* Types of Subcategories */
+/* Types of Subcategories -> Assumption that this can expand upwards in the future */
 export enum Types {
   TYPE_A = "TypeA",
   TYPE_B = "TypeB",

@@ -1,22 +1,11 @@
 "use strict";
-var __assign = (this && this.__assign) || function () {
-    __assign = Object.assign || function(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-                t[p] = s[p];
-        }
-        return t;
-    };
-    return __assign.apply(this, arguments);
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Manager = void 0;
-var constants_1 = require("../../constants/constants");
-var Department_1 = require("../Department/Department");
-var Type_1 = require("../Type/Type");
-var Manager = /** @class */ (function () {
-    function Manager() {
+const constants_1 = require("../../constants/constants");
+const Department_1 = require("../Department/Department");
+const Type_1 = require("../Type/Type");
+class Manager {
+    constructor() {
         this.data = new Map();
         this.numDepartments = 0;
         this.surchargeTotal = 0;
@@ -24,8 +13,8 @@ var Manager = /** @class */ (function () {
         this.total = 0;
     }
     /* Primary Functions */
-    Manager.prototype.addNode = function (current) {
-        var department = current.Department__c;
+    addNode(current) {
+        const department = current.Department__c;
         if (!Object.values(constants_1.Departments).includes(department)) {
             this.processInvalidData(current);
         }
@@ -36,11 +25,14 @@ var Manager = /** @class */ (function () {
             this.addDepartment(current);
         }
         else {
-            throw new Error("Failed to add JSON.stringify".concat(current));
+            throw new Error(`Failed to add JSON.stringify${current}`);
         }
-    };
-    Manager.prototype.establishTotals = function (levelObj) {
-        var _this = this;
+    }
+    /* Recursively travels down into each level of hierarchy and:
+        -retrieves sum from the lowest level
+        -sums all of lowest level into the level directly above it
+    */
+    establishTotals(levelObj) {
         // Adjust to bottom levelObj of hierarchy as needed
         if (levelObj instanceof Type_1.Type) {
             return {
@@ -48,63 +40,50 @@ var Manager = /** @class */ (function () {
                 surchargeTotal: levelObj.getSurchargeTotal(),
             };
         }
-        var currentLevelData = levelObj.getData();
-        var surchargeTotal = 0;
-        var total = 0;
-        currentLevelData.forEach(function (value, key) {
-            var obj = _this.establishTotals(currentLevelData.get(key));
+        const currentLevelData = levelObj.getData();
+        let surchargeTotal = 0;
+        let total = 0;
+        currentLevelData.forEach((value, key) => {
+            const obj = this.establishTotals(currentLevelData.get(key));
             surchargeTotal += obj.surchargeTotal;
             total += obj.total;
         });
         levelObj.setSurchargeTotal(surchargeTotal);
         levelObj.setTotal(total);
-        return { total: total, surchargeTotal: surchargeTotal };
-    };
-    /* Print any .csv rows that either:
-        - Don't have a valid department (e.g Department "Kentucky")
-        - Don't have a category that is permitted within a Department (e.g "ABM" Category in Development Department)
-        - Subject to requirements alterations -> Adjust accordingly in constants.ts
-    */
-    Manager.prototype.printInvalidData = function () {
-        console.log("Invalid data found in file:");
-        for (var i = 0; i < this.invalidData.length; i++) {
-            this.printInvalidDataFields(i);
-        }
-        console.log("\n");
-    };
+        return { total, surchargeTotal };
+    }
     /* Helper Functions */
-    Manager.prototype.proceed = function (current) {
+    proceed(current) {
         this.data.get(current.Department__c).addNode(current);
-    };
-    Manager.prototype.addDepartment = function (current) {
+    }
+    addDepartment(current) {
         this.data.set(current.Department__c, new Department_1.Department(current, this.invalidData));
         this.numDepartments++;
-    };
-    Manager.prototype.processInvalidData = function (current) {
-        this.invalidData.push(__assign(__assign({}, current), { reason: "Department ".concat(current.Department__c, " not any of ").concat((0, constants_1.getAllEnumValuesAsString)(constants_1.Departments), ".") }));
-    };
-    Manager.prototype.printInvalidDataFields = function (i) {
-        console.log("Id: ".concat(this.invalidData[i].Id, ", Name: ").concat(this.invalidData[i].Name, ", Reason: ").concat(this.invalidData[i].reason));
-    };
+    }
+    processInvalidData(current) {
+        this.invalidData.push(Object.assign(Object.assign({}, current), { reason: `Department ${current.Department__c} not any of ${(0, constants_1.getAllEnumValuesAsString)(constants_1.Departments)}.` }));
+    }
     /* Getters & Setters */
-    Manager.prototype.getTotal = function () {
+    getTotal() {
         return this.total;
-    };
-    Manager.prototype.setTotal = function (childrenSum) {
+    }
+    setTotal(childrenSum) {
         this.total = childrenSum;
-    };
-    Manager.prototype.setSurchargeTotal = function (childrenSum) {
+    }
+    setSurchargeTotal(childrenSum) {
         this.surchargeTotal = childrenSum;
-    };
-    Manager.prototype.getSurchargeTotal = function () {
+    }
+    getSurchargeTotal() {
         return this.surchargeTotal;
-    };
-    Manager.prototype.getData = function () {
+    }
+    getData() {
         return this.data;
-    };
-    Manager.prototype.getNumChildren = function () {
+    }
+    getNumChildren() {
         return this.numDepartments;
-    };
-    return Manager;
-}());
+    }
+    getInvalidData() {
+        return this.invalidData;
+    }
+}
 exports.Manager = Manager;

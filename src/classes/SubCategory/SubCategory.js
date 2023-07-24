@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SubCategory = void 0;
-var Type_1 = require("../Type/Type");
-var SubCategory = /** @class */ (function () {
-    function SubCategory(current) {
+const Type_1 = require("../Type/Type");
+class SubCategory {
+    constructor(current) {
         this.subCategory = current.Sub_Category__c;
         this.department = current.Department__c;
         this.category = current.Category__c;
@@ -14,8 +14,8 @@ var SubCategory = /** @class */ (function () {
         this.addNode(current);
     }
     /* Primary Functions */
-    SubCategory.prototype.addNode = function (current) {
-        var type = current.Type__c;
+    addNode(current) {
+        const type = current.Type__c;
         if (this.data.has(type)) {
             this.proceed(current);
         }
@@ -24,52 +24,50 @@ var SubCategory = /** @class */ (function () {
             this.numTypes++;
         }
         else {
-            throw new Error("Failed to add JSON.stringify".concat(current));
+            throw new Error(`Failed to add JSON.stringify${current}`);
         }
-    };
+    }
     /* Helper Functions */
-    SubCategory.prototype.proceed = function (current) {
+    proceed(current) {
         this.data.get(current.Type__c).addRow(current);
-    };
-    SubCategory.prototype.addType = function (current) {
+    }
+    addType(current) {
         this.data.set(current.Type__c, new Type_1.Type(current));
-    };
+    }
     /* Getters & Setters */
-    SubCategory.prototype.getTotal = function () {
+    getTotal() {
         return this.total;
-    };
-    SubCategory.prototype.setTotal = function (childrenSum) {
+    }
+    setTotal(childrenSum) {
         this.total = childrenSum;
-    };
-    SubCategory.prototype.getSurchargeTotal = function () {
+    }
+    getSurchargeTotal() {
         return this.surchargeTotal;
-    };
-    SubCategory.prototype.setSurchargeTotal = function (childrenSum) {
+    }
+    setSurchargeTotal(childrenSum) {
         this.surchargeTotal = childrenSum;
-    };
-    SubCategory.prototype.getSubCategory = function () {
+    }
+    getSubCategory() {
         return this.subCategory;
-    };
-    SubCategory.prototype.getData = function () {
+    }
+    getData() {
         return this.data;
-    };
+    }
     // Returns number of types that exist within this subcategory
-    SubCategory.prototype.getNumChildren = function () {
+    getNumChildren() {
         return this.numTypes;
-    };
+    }
     // Returns number of .csv rows that were grouped into this specific subcategory
-    SubCategory.prototype.getNumRows = function () {
-        var _this = this;
-        var res = 0;
-        this.data.forEach(function (value, key) { return (res += _this.data.get(key).getDataSize()); });
+    getNumRows() {
+        let res = 0;
+        this.data.forEach((value, key) => (res += this.data.get(key).getDataSize()));
         return res;
-    };
-    SubCategory.prototype.getDepartment = function () {
+    }
+    getDepartment() {
         return this.department;
-    };
-    SubCategory.prototype.getCategory = function () {
+    }
+    getCategory() {
         return this.category;
-    };
-    return SubCategory;
-}());
+    }
+}
 exports.SubCategory = SubCategory;

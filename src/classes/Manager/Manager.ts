@@ -40,6 +40,10 @@ export class Manager implements Container<Department> {
     }
   }
 
+  /* Recursively travels down into each level of hierarchy and:
+      -retrieves sum from the lowest level
+      -sums all of lowest level into the level directly above it
+  */
   public establishTotals(levelObj: levels): SurchargeAmount {
     // Adjust to bottom levelObj of hierarchy as needed
     if (levelObj instanceof Type) {
@@ -64,19 +68,6 @@ export class Manager implements Container<Department> {
     return { total, surchargeTotal };
   }
 
-  /* Print any .csv rows that either:
-      - Don't have a valid department (e.g Department "Kentucky")
-      - Don't have a category that is permitted within a Department (e.g "ABM" Category in Development Department)
-      - Subject to requirements alterations -> Adjust accordingly in constants.ts
-  */
-  public printInvalidData(): void {
-    console.log(`Invalid data found in file:`);
-    for (let i = 0; i < this.invalidData.length; i++) {
-      this.printInvalidDataFields(i);
-    }
-    console.log(`\n`);
-  }
-
   /* Helper Functions */
 
   private proceed(current: CsvRow): void {
@@ -98,12 +89,6 @@ export class Manager implements Container<Department> {
         current.Department__c
       } not any of ${getAllEnumValuesAsString(Departments)}.`,
     });
-  }
-
-  private printInvalidDataFields(i: number): void {
-    console.log(
-      `Id: ${this.invalidData[i].Id}, Name: ${this.invalidData[i].Name}, Reason: ${this.invalidData[i].reason}`
-    );
   }
 
   /* Getters & Setters */
@@ -130,5 +115,9 @@ export class Manager implements Container<Department> {
 
   public getNumChildren(): number {
     return this.numDepartments;
+  }
+
+  public getInvalidData(): CsvRow[] {
+    return this.invalidData;
   }
 }

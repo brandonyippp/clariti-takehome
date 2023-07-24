@@ -1,44 +1,40 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CsvProcessor = void 0;
-var csv = require("csv-parser");
-var fs = require("fs");
-var CsvProcessor = /** @class */ (function () {
-    function CsvProcessor() {
-    }
-    CsvProcessor.prototype.processFile = function (filePath, manager) {
+const csv = require("csv-parser");
+const fs = __importStar(require("fs"));
+class CsvProcessor {
+    constructor() { }
+    processFile(filePath, manager) {
         fs.createReadStream(filePath)
             .pipe(csv())
-            .on("data", function (row) { return manager.addNode(row); })
-            .on("end", function () {
+            .on("data", (row) => manager.addNode(row))
+            .on("end", () => {
             manager.establishTotals(manager);
         });
-    };
-    return CsvProcessor;
-}());
+    }
+}
 exports.CsvProcessor = CsvProcessor;
-// import { CsvRow } from "../interfaces/CsvRow/CsvRow";
-// import { Manager } from "../classes/Manager/Manager";
-// const csv = require("csv-parser");
-// import * as fs from "fs";
-// export class CsvProcessor {
-//   constructor() {}
-//   public processFile(filePath: string, manager: Manager): void {
-//     let res: number = 0;
-//     fs.createReadStream(filePath)
-//       .pipe(csv())
-//       .on("data", (row: CsvRow) => {
-//         // manager.addNode(row);
-//         if (
-//           row.Department__c === "Operations" &&
-//           row.Category__c === "Human Resources"
-//         ) {
-//           res += row.Quantity__c * row.Unit_Price__c;
-//         }
-//       })
-//       .on("end", () => {
-//         // manager.establishTotals(manager);
-//         console.log(res);
-//       });
-//   }
-// }

@@ -6,14 +6,16 @@ export class Category implements Container<SubCategory> {
   private data: Map<string, SubCategory>;
   private numSubCategories: number;
   private surchargeTotal: number;
+  private invalidData: CsvRow[];
   private department: string;
   private category: string;
   private total: number;
 
-  constructor(current: CsvRow, department: string) {
+  constructor(current: CsvRow, invalidData: CsvRow[]) {
     this.data = new Map<string, SubCategory>();
     this.department = current.Department__c;
     this.category = current.Category__c;
+    this.invalidData = invalidData;
     this.numSubCategories = 0;
     this.surchargeTotal = 0;
     this.total = 0;
@@ -42,7 +44,10 @@ export class Category implements Container<SubCategory> {
   }
 
   private addSubCategory(current: CsvRow): void {
-    this.data.set(current.Sub_Category__c, new SubCategory(current));
+    this.data.set(
+      current.Sub_Category__c,
+      new SubCategory(current, this.invalidData)
+    );
   }
 
   /* Getters & Setters */

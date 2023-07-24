@@ -11,6 +11,8 @@ export interface Contained {
 
   getType(): string;
 
+  getData(): CsvRow[];
+
   getDataSize(): number;
 
   getDepartment(): string;

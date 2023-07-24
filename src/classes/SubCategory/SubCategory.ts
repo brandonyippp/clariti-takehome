@@ -5,17 +5,19 @@ import { Type } from "../Type/Type";
 export class SubCategory implements Container<Type> {
   private data: Map<string, Type>;
   private surchargeTotal: number;
+  private invalidData: CsvRow[];
   private subCategory: string;
   private department: string;
   private category: string;
   private numTypes: number;
   private total: number;
 
-  constructor(current: CsvRow) {
+  constructor(current: CsvRow, invalidData: CsvRow[]) {
     this.subCategory = current.Sub_Category__c;
     this.department = current.Department__c;
     this.category = current.Category__c;
     this.data = new Map<string, Type>();
+    this.invalidData = invalidData;
     this.surchargeTotal = 0;
     this.numTypes = 0;
     this.total = 0;
@@ -44,7 +46,7 @@ export class SubCategory implements Container<Type> {
   }
 
   private addType(current: CsvRow): void {
-    this.data.set(current.Type__c, new Type(current));
+    this.data.set(current.Type__c, new Type(current, this.invalidData));
   }
 
   /* Getters & Setters */

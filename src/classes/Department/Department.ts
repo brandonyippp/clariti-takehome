@@ -46,7 +46,7 @@ export class Department implements Container<Category> {
   }
 
   private addCategory(current: CsvRow): void {
-    this.data.set(current.Category__c, new Category(current, this.department));
+    this.data.set(current.Category__c, new Category(current, this.invalidData));
   }
 
   private processInvalidData(current: CsvRow): void {
