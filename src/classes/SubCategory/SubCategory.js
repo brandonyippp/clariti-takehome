@@ -4,9 +4,12 @@ exports.SubCategory = void 0;
 var Type_1 = require("../Type/Type");
 var SubCategory = /** @class */ (function () {
     function SubCategory(current) {
-        this.name = current.Sub_Category__c;
+        this.subCategory = current.Sub_Category__c;
+        this.department = current.Department__c;
+        this.category = current.Category__c;
         this.data = new Map();
         this.numTypes = 0;
+        this.surchargeTotal = 0;
         this.total = 0;
         this.addNode(current);
     }
@@ -40,8 +43,14 @@ var SubCategory = /** @class */ (function () {
     SubCategory.prototype.setTotal = function (childrenSum) {
         this.total = childrenSum;
     };
-    SubCategory.prototype.getName = function () {
-        return this.name;
+    SubCategory.prototype.getSurchargeTotal = function () {
+        return this.surchargeTotal;
+    };
+    SubCategory.prototype.setSurchargeTotal = function (childrenSum) {
+        this.surchargeTotal = childrenSum;
+    };
+    SubCategory.prototype.getSubCategory = function () {
+        return this.subCategory;
     };
     SubCategory.prototype.getData = function () {
         return this.data;
@@ -56,6 +65,12 @@ var SubCategory = /** @class */ (function () {
         var res = 0;
         this.data.forEach(function (value, key) { return (res += _this.data.get(key).getDataSize()); });
         return res;
+    };
+    SubCategory.prototype.getDepartment = function () {
+        return this.department;
+    };
+    SubCategory.prototype.getCategory = function () {
+        return this.category;
     };
     return SubCategory;
 }());

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getAllEnumValuesAsString = exports.isPermittedCategory = exports.determineSurcharge = exports.Types = exports.SubCategories = exports.SupportCategory = exports.OperationsCategory = exports.DevelopmentCategory = exports.SalesCategory = exports.MarketingCategory = exports.Departments = void 0;
+exports.getAllEnumValuesAsString = exports.isPermittedCategory = exports.determineSurcharge = exports.calculateSurcharge = exports.Types = exports.SubCategories = exports.SupportCategory = exports.OperationsCategory = exports.DevelopmentCategory = exports.SalesCategory = exports.MarketingCategory = exports.Departments = void 0;
 /* Valid Departments */
 var Departments;
 (function (Departments) {
@@ -50,6 +50,14 @@ var Types;
     Types["TYPE_B"] = "TypeB";
     Types["TYPE_C"] = "TypeC";
 })(Types || (exports.Types = Types = {}));
+var calculateSurcharge = function (total, department) {
+    var _a = (0, exports.determineSurcharge)(department), surchargeAmount = _a.surchargeAmount, addPercentage = _a.addPercentage;
+    if (addPercentage) {
+        return total + total * surchargeAmount;
+    }
+    return total - total * surchargeAmount;
+};
+exports.calculateSurcharge = calculateSurcharge;
 var determineSurcharge = function (department) {
     if (department === Departments.MARKETING) {
         return { surchargeAmount: 0.1, addPercentage: true };

@@ -1,3 +1,4 @@
+import { calculateSurcharge } from "../../constants/constants";
 import { Contained } from "../../interfaces/Contained/Contained";
 import { CsvRow } from "../../interfaces/CsvRow/CsvRow";
 
@@ -6,6 +7,7 @@ export class Type implements Contained {
   private category: string;
   private subCategory: string;
   private type: string;
+  private surchargeTotal: number;
   private total: number;
   private data: CsvRow[];
 
@@ -14,6 +16,7 @@ export class Type implements Contained {
     this.category = current.Category__c;
     this.subCategory = current.Sub_Category__c;
     this.type = current.Type__c;
+    this.surchargeTotal = 0;
     this.total = 0;
     this.data = [];
     this.addRow(current);
@@ -27,6 +30,7 @@ export class Type implements Contained {
 
     this.data.push(current);
     this.total += unitPrice * quantity;
+    this.surchargeTotal = calculateSurcharge(this.total, this.department);
   }
 
   /* Displays all .csv data for current hierarchy bucket
@@ -64,12 +68,28 @@ export class Type implements Contained {
     return this.total;
   }
 
-  public getType(): string {
-    return this.type;
+  public getSurchargeTotal(): number {
+    return this.surchargeTotal;
   }
 
   // Returns number of .csv rows that were labelled as either Type<A/B/C>
   public getDataSize(): number {
     return this.data.length;
+  }
+
+  public getDepartment(): string {
+    return this.department;
+  }
+
+  public getCategory(): string {
+    return this.category;
+  }
+
+  public getSubCategory(): string {
+    return this.subCategory;
+  }
+
+  public getType(): string {
+    return this.type;
   }
 }

@@ -18,9 +18,9 @@ var Type_1 = require("../Type/Type");
 var Manager = /** @class */ (function () {
     function Manager() {
         this.data = new Map();
-        this.surchargeTotal = 0;
         this.numDepartments = 0;
         this.invalidData = [];
+        this.surchargeTotal = 0;
         this.total = 0;
     }
     /* Primary Functions */
@@ -44,15 +44,22 @@ var Manager = /** @class */ (function () {
         var _this = this;
         // Adjust to bottom levelObj of hierarchy as needed
         if (levelObj instanceof Type_1.Type) {
-            return levelObj.getTotal();
+            return {
+                total: levelObj.getTotal(),
+                surchargeTotal: levelObj.getSurchargeTotal(),
+            };
         }
-        var res = 0;
+        var total = 0;
+        var surchargeTotal = 0;
         var currentLevelData = levelObj.getData();
         currentLevelData.forEach(function (value, key) {
-            return (res += _this.establishTotals(currentLevelData.get(key)));
+            var obj = _this.establishTotals(currentLevelData.get(key));
+            total += obj.total;
+            surchargeTotal += obj.surchargeTotal;
         });
-        levelObj.setTotal(res);
-        return res;
+        levelObj.setTotal(total);
+        levelObj.setSurchargeTotal(surchargeTotal);
+        return { total: total, surchargeTotal: surchargeTotal };
     };
     /* Print any .csv rows that either:
         - Don't have a valid department (e.g Department "Kentucky")
@@ -84,21 +91,14 @@ var Manager = /** @class */ (function () {
     Manager.prototype.getTotal = function () {
         return this.total;
     };
-    Manager.prototype.getSurchargeTotal = function () {
-        return this.surchargeTotal;
-    };
     Manager.prototype.setTotal = function (childrenSum) {
         this.total = childrenSum;
-        this.surchargeTotal = this.setTotalHelper();
     };
-    // Assign surcharges for top-level container
-    Manager.prototype.setTotalHelper = function () {
-        var _this = this;
-        var surchargeTotal = 0;
-        this.data.forEach(function (value, key) {
-            return (surchargeTotal += _this.data.get(key).getSurchargeTotal());
-        });
-        return surchargeTotal;
+    Manager.prototype.setSurchargeTotal = function (childrenSum) {
+        this.surchargeTotal = childrenSum;
+    };
+    Manager.prototype.getSurchargeTotal = function () {
+        return this.surchargeTotal;
     };
     Manager.prototype.getData = function () {
         return this.data;

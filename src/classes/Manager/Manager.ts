@@ -17,9 +17,9 @@ export class Manager implements Container<Department> {
 
   constructor() {
     this.data = new Map<string, Department>();
-    this.surchargeTotal = 0;
     this.numDepartments = 0;
     this.invalidData = [];
+    this.surchargeTotal = 0;
     this.total = 0;
   }
 
@@ -40,22 +40,31 @@ export class Manager implements Container<Department> {
     }
   }
 
-  public establishTotals(levelObj: levels): number {
+  public establishTotals(levelObj: levels): {
+    total: number;
+    surchargeTotal: number;
+  } {
     // Adjust to bottom levelObj of hierarchy as needed
     if (levelObj instanceof Type) {
-      return levelObj.getTotal();
+      return {
+        total: levelObj.getTotal(),
+        surchargeTotal: levelObj.getSurchargeTotal(),
+      };
     }
 
-    let res: number = 0;
+    let total: number = 0;
+    let surchargeTotal: number = 0;
     const currentLevelData: Map<string, levels> = levelObj.getData();
 
-    currentLevelData.forEach(
-      (value: levels, key: string) =>
-        (res += this.establishTotals(currentLevelData.get(key)!))
-    );
+    currentLevelData.forEach((value: levels, key: string) => {
+      const obj = this.establishTotals(currentLevelData.get(key)!);
+      total += obj.total;
+      surchargeTotal += obj.surchargeTotal;
+    });
 
-    levelObj.setTotal(res);
-    return res;
+    levelObj.setTotal(total);
+    levelObj.setSurchargeTotal(surchargeTotal);
+    return { total, surchargeTotal };
   }
 
   /* Print any .csv rows that either:
@@ -106,24 +115,16 @@ export class Manager implements Container<Department> {
     return this.total;
   }
 
-  public getSurchargeTotal(): number {
-    return this.surchargeTotal;
-  }
-
   public setTotal(childrenSum: number): void {
     this.total = childrenSum;
-    this.surchargeTotal = this.setTotalHelper();
   }
 
-  // Assign surcharges for top-level container
-  private setTotalHelper(): number {
-    let surchargeTotal: number = 0;
-    this.data.forEach(
-      (value: levels, key: string) =>
-        (surchargeTotal += this.data.get(key)!.getSurchargeTotal())
-    );
+  public setSurchargeTotal(childrenSum: number): void {
+    this.surchargeTotal = childrenSum;
+  }
 
-    return surchargeTotal;
+  public getSurchargeTotal(): number {
+    return this.surchargeTotal;
   }
 
   public getData(): Map<string, Department> {
@@ -133,18 +134,4 @@ export class Manager implements Container<Department> {
   public getNumChildren(): number {
     return this.numDepartments;
   }
-
-  // //TODO: bug only if we display all possible Types instead of only those that exist (imagine typeA and typeB exist, and we list typeC. we then try to access map.get(typeC)) and it fails
-  // public getChildTotal(
-  //   levelObj: levels,
-  //   steps: string[],
-  //   index: number
-  // ): number {
-  //   const currentLevelData: Map<string, levels> = levelObj.getData();
-
-  //   /**
-  //    *
-  //    * If empty -> return all  department total, aka this.total
-  //    */
-  // }
 }

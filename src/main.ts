@@ -1,18 +1,19 @@
 import { Manager } from "./classes/Manager/Manager";
 import { Output } from "./classes/Output/Output";
+import { Type } from "./classes/Type/Type";
 import { levels } from "./constants/constants";
 import { CsvProcessor } from "./utils/CsvProcessor";
 
 const filePath = "../data/raw_fees.csv";
 
-const main = () => {
+const main = async () => {
   const csvProcessor = new CsvProcessor();
   const manager = new Manager();
   const output = new Output();
   csvProcessor.processFile(filePath, manager);
 
   let currentLevel: levels = manager;
-  let userResponse: string = "";
+  let userChoice: number;
   let introOptions = [
     `All Departments`,
     `A specific Department`,
@@ -23,34 +24,37 @@ const main = () => {
   ];
 
   output.displayWelcome();
+  output.printGuide();
   while (true) {
-    output.printGuide();
-    output.askQuestion(output.constructMenu(introOptions), introOptions.length);
-
-    if (output.userExitedProgram()) {
-      break;
-    }
-
-    const steps = output.getSteps();
-    for (let i = 0; i < steps; i++) {
-      output.askQuestion(
-        output.constructMenu(currentLevel),
-        currentLevel.getNumChildren(),
-        true
+    try {
+      await output.askQuestion(
+        output.constructMenu(introOptions),
+        introOptions.length
       );
 
-      userResponse = output.getUserResponse();
+      const steps = output.getSteps();
+      for (let i = 0; i < steps; i++) {
+        await output.askQuestion(
+          output.constructMenu(currentLevel),
+          currentLevel.getNumChildren(),
+          true
+        );
 
-      // Get the corresponding key:value pair in currentLevel hashmap based on the users selection of <1 / 2 / etc.>
-      const currentLevelData: levels = currentLevel.getData();
-      const arr = Array.from(currentLevelData.entries());
-      const [key, value] = arr[parseInt(userResponse) - 1];
-      currentLevel = currentLevelData.get(key);
+        if (!(currentLevel instanceof Type)) {
+          userChoice = parseInt(output.getUserResponse());
+          const arr: string[] = Array.from(currentLevel.getData().keys());
+          currentLevel = currentLevel.getData().get(arr[userChoice - 1])!;
+        }
+      }
+
+      output.printFeeTotals(currentLevel);
+      output.printDottedLine();
+      currentLevel = manager;
+    } catch (error) {
+      //   console.log(error);
+      break;
     }
-
-    output.printFeeTotals(currentLevel);
   }
-
   console.log("Exiting program.");
 };
 

@@ -1,28 +1,22 @@
-import {
-  isPermittedCategory,
-  determineSurcharge,
-} from "../../constants/constants";
-import { DepartmentSurcharge } from "../../interfaces/Surcharge/Surcharge";
+import { isPermittedCategory } from "../../constants/constants";
 import { Container } from "../../interfaces/Container/Container";
 import { CsvRow } from "../../interfaces/CsvRow/CsvRow";
 import { Category } from "../Category/Category";
 
 export class Department implements Container<Category> {
-  private surcharge: DepartmentSurcharge;
   private data: Map<string, Category>;
   private numCategories: number;
   private invalidData: CsvRow[];
-  private total: number;
   private surchargeTotal: number;
-  private name: string;
+  private total: number;
+  private department: string;
 
   constructor(current: CsvRow, invalidData: CsvRow[]) {
-    this.surcharge = determineSurcharge(current.Department__c);
     this.data = new Map<string, Category>();
-    this.name = current.Department__c;
+    this.department = current.Department__c;
     this.invalidData = invalidData;
-    this.surchargeTotal = 0;
     this.numCategories = 0;
+    this.surchargeTotal = 0;
     this.total = 0;
     this.addNode(current);
   }
@@ -39,6 +33,7 @@ export class Department implements Container<Category> {
       this.proceed(current);
     } else if (!this.data.has(category)) {
       this.addCategory(current);
+      this.numCategories++;
     } else {
       //TODO: Probably won't happen, but maybe think of something to do here
       console.log(`Department ${department} failed to add ${category}.`);
@@ -52,7 +47,7 @@ export class Department implements Container<Category> {
   }
 
   private addCategory(current: CsvRow): void {
-    this.data.set(current.Category__c, new Category(current));
+    this.data.set(current.Category__c, new Category(current, this.department));
   }
 
   private processInvalidData(current: CsvRow): void {
@@ -70,22 +65,18 @@ export class Department implements Container<Category> {
 
   public setTotal(childrenSum: number): void {
     this.total = childrenSum;
-
-    if (this.surcharge.addPercentage) {
-      this.surchargeTotal =
-        childrenSum + this.total * this.surcharge.surchargeAmount;
-    } else {
-      this.surchargeTotal =
-        childrenSum - this.total * this.surcharge.surchargeAmount;
-    }
   }
 
   public getSurchargeTotal(): number {
     return this.surchargeTotal;
   }
 
-  public getName(): string {
-    return this.name;
+  public setSurchargeTotal(childrenSum: number): void {
+    this.surchargeTotal = childrenSum;
+  }
+
+  public getDepartment(): string {
+    return this.department;
   }
 
   public getData(): Map<string, Category> {

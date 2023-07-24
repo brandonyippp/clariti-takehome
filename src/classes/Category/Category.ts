@@ -5,13 +5,17 @@ import { SubCategory } from "../SubCategory/SubCategory";
 export class Category implements Container<SubCategory> {
   private data: Map<string, SubCategory>;
   private numSubCategories: number;
+  private surchargeTotal: number;
   private total: number;
-  private name: string;
+  private department: string;
+  private category: string;
 
-  constructor(current: CsvRow) {
+  constructor(current: CsvRow, department: string) {
     this.data = new Map<string, SubCategory>();
-    this.name = current.Category__c;
+    this.department = current.Department__c;
+    this.category = current.Category__c;
     this.numSubCategories = 0;
+    this.surchargeTotal = 0;
     this.total = 0;
     this.addNode(current);
   }
@@ -26,6 +30,7 @@ export class Category implements Container<SubCategory> {
       this.proceed(current);
     } else if (!this.data.has(category)) {
       this.addSubCategory(current);
+      this.numSubCategories++;
     } else {
       //TODO: Probably won't happen, but maybe think of something to do here
       console.log(`Category ${category} failed to add ${subCategory}.`);
@@ -52,8 +57,16 @@ export class Category implements Container<SubCategory> {
     this.total = childrenSum;
   }
 
-  public getName(): string {
-    return this.name;
+  public getSurchargeTotal(): number {
+    return this.surchargeTotal;
+  }
+
+  public setSurchargeTotal(childrenSum: number): void {
+    this.surchargeTotal = childrenSum;
+  }
+
+  public getCategory(): string {
+    return this.category;
   }
 
   public getData(): Map<string, SubCategory> {
@@ -62,5 +75,9 @@ export class Category implements Container<SubCategory> {
 
   public getNumChildren(): number {
     return this.numSubCategories;
+  }
+
+  public getDepartment(): string {
+    return this.department;
   }
 }

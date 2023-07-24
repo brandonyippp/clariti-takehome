@@ -3,10 +3,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Category = void 0;
 var SubCategory_1 = require("../SubCategory/SubCategory");
 var Category = /** @class */ (function () {
-    function Category(current) {
+    function Category(current, department) {
         this.data = new Map();
-        this.name = current.Category__c;
+        this.department = current.Department__c;
+        this.category = current.Category__c;
         this.numSubCategories = 0;
+        this.surchargeTotal = 0;
         this.total = 0;
         this.addNode(current);
     }
@@ -19,6 +21,7 @@ var Category = /** @class */ (function () {
         }
         else if (!this.data.has(category)) {
             this.addSubCategory(current);
+            this.numSubCategories++;
         }
         else {
             //TODO: Probably won't happen, but maybe think of something to do here
@@ -39,14 +42,23 @@ var Category = /** @class */ (function () {
     Category.prototype.setTotal = function (childrenSum) {
         this.total = childrenSum;
     };
-    Category.prototype.getName = function () {
-        return this.name;
+    Category.prototype.getSurchargeTotal = function () {
+        return this.surchargeTotal;
+    };
+    Category.prototype.setSurchargeTotal = function (childrenSum) {
+        this.surchargeTotal = childrenSum;
+    };
+    Category.prototype.getCategory = function () {
+        return this.category;
     };
     Category.prototype.getData = function () {
         return this.data;
     };
     Category.prototype.getNumChildren = function () {
         return this.numSubCategories;
+    };
+    Category.prototype.getDepartment = function () {
+        return this.department;
     };
     return Category;
 }());

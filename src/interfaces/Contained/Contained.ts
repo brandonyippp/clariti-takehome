@@ -14,4 +14,6 @@ export interface Contained {
   getType(): string;
 
   getDataSize(): number;
+
+  getDepartment(): string;
 }

@@ -16,12 +16,11 @@ var constants_1 = require("../../constants/constants");
 var Category_1 = require("../Category/Category");
 var Department = /** @class */ (function () {
     function Department(current, invalidData) {
-        this.surcharge = (0, constants_1.determineSurcharge)(current.Department__c);
         this.data = new Map();
-        this.name = current.Department__c;
+        this.department = current.Department__c;
         this.invalidData = invalidData;
-        this.surchargeTotal = 0;
         this.numCategories = 0;
+        this.surchargeTotal = 0;
         this.total = 0;
         this.addNode(current);
     }
@@ -37,6 +36,7 @@ var Department = /** @class */ (function () {
         }
         else if (!this.data.has(category)) {
             this.addCategory(current);
+            this.numCategories++;
         }
         else {
             //TODO: Probably won't happen, but maybe think of something to do here
@@ -48,7 +48,7 @@ var Department = /** @class */ (function () {
         this.data.get(current.Category__c).addNode(current);
     };
     Department.prototype.addCategory = function (current) {
-        this.data.set(current.Category__c, new Category_1.Category(current));
+        this.data.set(current.Category__c, new Category_1.Category(current, this.department));
     };
     Department.prototype.processInvalidData = function (current) {
         this.invalidData.push(__assign(__assign({}, current), { reason: "Category ".concat(current.Category__c, " not valid for Department ").concat(current.Department__c, ".") }));
@@ -59,20 +59,15 @@ var Department = /** @class */ (function () {
     };
     Department.prototype.setTotal = function (childrenSum) {
         this.total = childrenSum;
-        if (this.surcharge.addPercentage) {
-            this.surchargeTotal =
-                childrenSum + this.total * this.surcharge.surchargeAmount;
-        }
-        else {
-            this.surchargeTotal =
-                childrenSum - this.total * this.surcharge.surchargeAmount;
-        }
     };
     Department.prototype.getSurchargeTotal = function () {
         return this.surchargeTotal;
     };
-    Department.prototype.getName = function () {
-        return this.name;
+    Department.prototype.setSurchargeTotal = function (childrenSum) {
+        this.surchargeTotal = childrenSum;
+    };
+    Department.prototype.getDepartment = function () {
+        return this.department;
     };
     Department.prototype.getData = function () {
         return this.data;

@@ -57,6 +57,19 @@ export enum Types {
   TYPE_C = "TypeC",
 }
 
+export const calculateSurcharge = (
+  total: number,
+  department: string
+): number => {
+  const { surchargeAmount, addPercentage } = determineSurcharge(department);
+
+  if (addPercentage) {
+    return total + total * surchargeAmount;
+  }
+
+  return total - total * surchargeAmount;
+};
+
 export const determineSurcharge = (department: string): DepartmentSurcharge => {
   if (department === Departments.MARKETING) {
     return { surchargeAmount: 0.1, addPercentage: true };

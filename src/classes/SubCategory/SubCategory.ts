@@ -5,13 +5,19 @@ import { Type } from "../Type/Type";
 export class SubCategory implements Container<Type> {
   private data: Map<string, Type>;
   private numTypes: number;
+  private surchargeTotal: number;
   private total: number;
-  private name: string;
+  private department: string;
+  private category: string;
+  private subCategory: string;
 
   constructor(current: CsvRow) {
-    this.name = current.Sub_Category__c;
+    this.subCategory = current.Sub_Category__c;
+    this.department = current.Department__c;
+    this.category = current.Category__c;
     this.data = new Map<string, Type>();
     this.numTypes = 0;
+    this.surchargeTotal = 0;
     this.total = 0;
     this.addNode(current);
   }
@@ -53,8 +59,16 @@ export class SubCategory implements Container<Type> {
     this.total = childrenSum;
   }
 
-  public getName(): string {
-    return this.name;
+  public getSurchargeTotal(): number {
+    return this.surchargeTotal;
+  }
+
+  public setSurchargeTotal(childrenSum: number): void {
+    this.surchargeTotal = childrenSum;
+  }
+
+  public getSubCategory(): string {
+    return this.subCategory;
   }
 
   public getData(): Map<string, Type> {
@@ -75,5 +89,13 @@ export class SubCategory implements Container<Type> {
     );
 
     return res;
+  }
+
+  public getDepartment(): string {
+    return this.department;
+  }
+
+  public getCategory(): string {
+    return this.category;
   }
 }
