@@ -82,7 +82,7 @@ export const determineSurcharge = (department: string): DepartmentSurcharge => {
   } else if (department === Departments.DEVELOPMENT) {
     return { surchargeAmount: 0.2, addPercentage: true };
   } else if (department === Departments.OPERATIONS) {
-    return { surchargeAmount: 0.1, addPercentage: false };
+    return { surchargeAmount: 0.15, addPercentage: false };
   } else if (department === Departments.SUPPORT) {
     return { surchargeAmount: 0.05, addPercentage: false };
   } else {

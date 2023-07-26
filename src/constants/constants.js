@@ -37,14 +37,14 @@ var SupportCategory;
     SupportCategory["TIER_2"] = "Tier 2";
     SupportCategory["TIER_3"] = "Tier 3";
 })(SupportCategory || (exports.SupportCategory = SupportCategory = {}));
-/* Subcategories of Categories */
+/* Subcategories of Categories -> Assumption that this can expand upwards in the future */
 var SubCategories;
 (function (SubCategories) {
     SubCategories["CAT_1"] = "Cat1";
     SubCategories["CAT_2"] = "Cat2";
     SubCategories["CAT_3"] = "Cat3";
 })(SubCategories || (exports.SubCategories = SubCategories = {}));
-/* Types of Subcategories */
+/* Types of Subcategories -> Assumption that this can expand upwards in the future */
 var Types;
 (function (Types) {
     Types["TYPE_A"] = "TypeA";
@@ -52,15 +52,15 @@ var Types;
     Types["TYPE_C"] = "TypeC";
 })(Types || (exports.Types = Types = {}));
 /* Functions */
-const calculateSurcharge = (total, department) => {
-    const { surchargeAmount, addPercentage } = (0, exports.determineSurcharge)(department);
+var calculateSurcharge = function (total, department) {
+    var _a = (0, exports.determineSurcharge)(department), surchargeAmount = _a.surchargeAmount, addPercentage = _a.addPercentage;
     if (addPercentage) {
         return total + total * surchargeAmount;
     }
     return total - total * surchargeAmount;
 };
 exports.calculateSurcharge = calculateSurcharge;
-const determineSurcharge = (department) => {
+var determineSurcharge = function (department) {
     if (department === Departments.MARKETING) {
         return { surchargeAmount: 0.1, addPercentage: true };
     }
@@ -71,7 +71,7 @@ const determineSurcharge = (department) => {
         return { surchargeAmount: 0.2, addPercentage: true };
     }
     else if (department === Departments.OPERATIONS) {
-        return { surchargeAmount: 0.1, addPercentage: false };
+        return { surchargeAmount: 0.15, addPercentage: false };
     }
     else if (department === Departments.SUPPORT) {
         return { surchargeAmount: 0.05, addPercentage: false };
@@ -82,7 +82,7 @@ const determineSurcharge = (department) => {
 };
 exports.determineSurcharge = determineSurcharge;
 /* Validates that current category is permitted to be in current department (e.g) QA category belongs to Development, not Support department*/
-const isPermittedCategory = (category, department) => {
+var isPermittedCategory = function (category, department) {
     if (department === Departments.MARKETING &&
         !Object.values(MarketingCategory).includes(category)) {
         return false;
@@ -109,9 +109,9 @@ exports.isPermittedCategory = isPermittedCategory;
 /**
  * Returns enum values in format { enumVal1 / enumVal2 / ... / enumVal<n> }
  */
-const getAllEnumValuesAsString = (enumObj) => {
-    let res = "{ ";
-    for (const key in enumObj) {
+var getAllEnumValuesAsString = function (enumObj) {
+    var res = "{ ";
+    for (var key in enumObj) {
         res += enumObj[key] + " / ";
     }
     res += "}";

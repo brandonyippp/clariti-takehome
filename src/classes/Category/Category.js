@@ -1,20 +1,21 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Category = void 0;
-const SubCategory_1 = require("../SubCategory/SubCategory");
-class Category {
-    constructor(current) {
+var SubCategory_1 = require("../SubCategory/SubCategory");
+var Category = /** @class */ (function () {
+    function Category(current, invalidData) {
         this.data = new Map();
         this.department = current.Department__c;
         this.category = current.Category__c;
+        this.invalidData = invalidData;
         this.numSubCategories = 0;
         this.surchargeTotal = 0;
         this.total = 0;
         this.addNode(current);
     }
     /* Primary Functions */
-    addNode(current) {
-        const subCategory = current.Sub_Category__c;
+    Category.prototype.addNode = function (current) {
+        var subCategory = current.Sub_Category__c;
         if (this.data.has(subCategory)) {
             this.proceed(current);
         }
@@ -23,40 +24,41 @@ class Category {
             this.numSubCategories++;
         }
         else {
-            throw new Error(`Failed to add JSON.stringify${current}`);
+            throw new Error("Failed to add JSON.stringify".concat(current));
         }
-    }
+    };
     /* Helper Functions */
-    proceed(current) {
+    Category.prototype.proceed = function (current) {
         this.data.get(current.Sub_Category__c).addNode(current);
-    }
-    addSubCategory(current) {
-        this.data.set(current.Sub_Category__c, new SubCategory_1.SubCategory(current));
-    }
+    };
+    Category.prototype.addSubCategory = function (current) {
+        this.data.set(current.Sub_Category__c, new SubCategory_1.SubCategory(current, this.invalidData));
+    };
     /* Getters & Setters */
-    getTotal() {
+    Category.prototype.getTotal = function () {
         return this.total;
-    }
-    setTotal(childrenSum) {
+    };
+    Category.prototype.setTotal = function (childrenSum) {
         this.total = childrenSum;
-    }
-    getSurchargeTotal() {
+    };
+    Category.prototype.getSurchargeTotal = function () {
         return this.surchargeTotal;
-    }
-    setSurchargeTotal(childrenSum) {
+    };
+    Category.prototype.setSurchargeTotal = function (childrenSum) {
         this.surchargeTotal = childrenSum;
-    }
-    getCategory() {
+    };
+    Category.prototype.getCategory = function () {
         return this.category;
-    }
-    getData() {
+    };
+    Category.prototype.getData = function () {
         return this.data;
-    }
-    getNumChildren() {
+    };
+    Category.prototype.getNumChildren = function () {
         return this.numSubCategories;
-    }
-    getDepartment() {
+    };
+    Category.prototype.getDepartment = function () {
         return this.department;
-    }
-}
+    };
+    return Category;
+}());
 exports.Category = Category;
